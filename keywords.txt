@@ -5,7 +5,6 @@
 # # Datatypes (KEYWORD1)
 #######################################
 FLProgAbstracttWiFiInterface	KEYWORD1
-FLProgOnBoardWifi	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
