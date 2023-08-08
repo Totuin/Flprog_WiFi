@@ -4,13 +4,18 @@
 #######################################
 # # Datatypes (KEYWORD1)
 #######################################
-
+FLProgAbstracttWiFiInterface	KEYWORD1
+FLProgOnBoardWifi	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-
+setApPassword	KEYWORD2
+setApSsid	KEYWORD2
+setClientPassword	KEYWORD2
+setClientSsidd	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
+FLPROG_WIFI_TCP_DEVICE	LITERAL1
