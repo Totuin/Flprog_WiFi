@@ -1,5 +1,5 @@
-#include "flprogEsp8266Wifi.h"
-#ifdef ARDUINO_ARCH_ESP8266
+#include "flprogEsp32Wifi.h"
+#ifdef ARDUINO_ARCH_ESP32
 
 void FLProgOnBoardWifi::pool()
 {
@@ -16,7 +16,6 @@ void FLProgOnBoardWifi::pool()
             clientSubnet = WiFi.subnetMask();
             clientGateway = WiFi.gatewayIP();
             clientDns = WiFi.dnsIP();
-            WiFi.macAddress(clientMac);
             needUpdateClientData = false;
         }
     }
@@ -28,12 +27,12 @@ void FLProgOnBoardWifi::pool()
 
 void FLProgOnBoardWifi::reconnect()
 {
+
     if (WiFi.getAutoConnect() != true)
     {
         WiFi.setAutoConnect(true);
     }
     WiFi.setAutoReconnect(true);
-
     if (apWorkStatus)
     {
         if (clientWorkStatus)
@@ -72,7 +71,6 @@ void FLProgOnBoardWifi::clientReconnect()
         }
         return;
     }
-    wifi_set_macaddr(0, const_cast<uint8 *>(clientMac));
     if (clientIsDhcp)
     {
         WiFi.config(0U, 0U, 0U, 0U, 0U);
@@ -93,30 +91,31 @@ void FLProgOnBoardWifi::clientReconnect()
     }
     WiFi.begin(clientSsid, clientPassword);
     isCanStartServer = true;
+    WiFi.macAddress(clientMac);
 }
+
 void FLProgOnBoardWifi::apReconnect()
 {
     if (!apIsNeedReconect)
     {
-        WiFi.softAPdisconnect();
         return;
     }
     apIsNeedReconect = false;
     if (!apWorkStatus)
     {
+        WiFi.softAPdisconnect();
         return;
     }
-    wifi_set_macaddr(1, const_cast<uint8 *>(apMac));
-
-    if (clientGateway == IPAddress(0, 0, 0, 0))
+    if (apGateway == IPAddress(0, 0, 0, 0))
     {
         apGateway = apIp;
         apGateway[3] = 1;
     }
-
     WiFi.softAPConfig(apIp, apGateway, apSubnet);
     WiFi.softAP(apSsid, apPassword);
     isCanStartServer = true;
+    WiFi.softAPmacAddress(apMac);
+    WiFi.softAPConfig(apIp, apGateway, apSubnet);
 }
 
 #endif

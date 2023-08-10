@@ -1,11 +1,7 @@
 #pragma once
 #include "flprogWiFi.h"
-#ifdef ARDUINO_ARCH_ESP8266
+#ifdef ARDUINO_ARCH_ESP32
 
-extern "C"
-{
-#include "user_interface.h"
-}
 
 class FLProgOnBoardWifi : public FLProgAbstracttWiFiInterface
 {
@@ -13,7 +9,8 @@ public:
     virtual void pool();
 
 protected:
-    WiFiMode mode = WIFI_AP_STA;
+    wifi_mode_t mode = WIFI_AP_STA;
+    uint32_t lastReconnectTime = flprog::timeBack(5000);
     virtual void reconnect();
     virtual void clientReconnect();
     virtual void apReconnect();

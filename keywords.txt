@@ -5,14 +5,74 @@
 # # Datatypes (KEYWORD1)
 #######################################
 FLProgAbstracttWiFiInterface	KEYWORD1
+FLProgOnBoardWifi	KEYWORD1
+FLProgWiFiClient	KEYWORD1
+FlprogWiFiServer	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
+accept	KEYWORD2
+apOff	KEYWORD2
+apOn	KEYWORD2
+available	KEYWORD2
+begin	KEYWORD2
+bool	KEYWORD2
+canStartServer	KEYWORD2
+clientOff	KEYWORD2
+clientOn	KEYWORD2
+close	KEYWORD2
+connect	KEYWORD2
+connected	KEYWORD2
+dnsIP	KEYWORD2
+end	KEYWORD2
+flush	KEYWORD2
+gatewayIP	KEYWORD2
+getApDns	KEYWORD2
+getApGatewayt	KEYWORD2
+getApIp	KEYWORD2
+getApMac	KEYWORD2
+getApSubnet	KEYWORD2
+getClientDns	KEYWORD2
+getClientGateway	KEYWORD2
+getClientIp	KEYWORD2
+getClientIsDhcp	KEYWORD2
+getClientMac	KEYWORD2
+getClientStatus	KEYWORD2
+getClientSubnet	KEYWORD2
+getNoDelay	KEYWORD2
+hasClient	KEYWORD2
+listening	KEYWORD2
+localIP	KEYWORD2
+localPort	KEYWORD2
+peek	KEYWORD2
+pool	KEYWORD2
+read	KEYWORD2
+remoteIP	KEYWORD2
+remotePort	KEYWORD2
+resetClientDhcp	KEYWORD2
+setApDns	KEYWORD2
+setApGateway	KEYWORD2
+setApIp	KEYWORD2
+setApMac	KEYWORD2
 setApPassword	KEYWORD2
 setApSsid	KEYWORD2
+setApSubnet	KEYWORD2
+setClientDhcp	KEYWORD2
+setClientDns	KEYWORD2
+setClientGateway	KEYWORD2
+setClientIp	KEYWORD2
+setClientMac	KEYWORD2
 setClientPassword	KEYWORD2
 setClientSsidd	KEYWORD2
+setClientSubnet	KEYWORD2
+setNoDelay	KEYWORD2
+setTimeout	KEYWORD2
+stop	KEYWORD2
+stopAll	KEYWORD2
+subnetMask	KEYWORD2
+write	KEYWORD2
+write_P	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
