@@ -1,7 +1,7 @@
 #pragma once
 #include "flprogWiFi.h"
-#ifdef ARDUINO_ARCH_ESP32
-
+#ifdef ARDUINO_ARCH_RP2040
+#ifdef ARDUINO_RASPBERRY_PI_PICO_W
 
 class FLProgWiFiClient : public FLProgAbstractWiFiClient
 {
@@ -26,18 +26,9 @@ public:
     virtual IPAddress localIP() { return client.localIP(); };
     virtual uint16_t localPort() { return client.localPort(); };
 
-    size_t write_P(PGM_P buf, size_t size) { return client.write_P(buf, size); };
-    size_t write(Stream &stream) { return client.write(stream); };
-    IPAddress remoteIP(int fd) { return client.remoteIP(fd); };
-    uint16_t remotePort(int fd) { return client.remotePort(fd); };
-    IPAddress localIP(int fd) { return client.localIP(fd); };
-    uint16_t localPort(int fd) { return client.localPort(fd); };
-
 protected:
     WiFiClient client;
 };
-
-
 
 class FlprogWiFiServer : public FlprogAbstractWiFiServer
 {
@@ -53,9 +44,6 @@ public:
     virtual void stop();
     virtual bool listening();
 
-    int setTimeout(uint32_t seconds);
-    void stopAll();
-
 protected:
     WiFiServer *server;
 };
@@ -64,12 +52,15 @@ class FLProgOnBoardWifi : public FLProgAbstracttWiFiInterface
 {
 public:
     virtual void pool();
+    virtual void apOn();
+    virtual void clientOn();
 
 protected:
-    wifi_mode_t mode = WIFI_AP_STA;
-    uint32_t lastReconnectTime = flprog::timeBack(5000);
+    WiFiMode_t mode = WIFI_AP_STA;
     virtual void reconnect();
     virtual void clientReconnect();
-    virtual void apReconnect();
+    uint32_t reconnectPeriod = 20000;
+    uint32_t lastReconnectTime = flprog::timeBack(reconnectPeriod);
 };
+#endif
 #endif

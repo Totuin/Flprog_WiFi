@@ -196,459 +196,78 @@ void FLProgAbstracttWiFiInterface::resetClientDhcp()
 }
 
 //--------------------FLProgWiFiClient ----------------------
-#ifdef FLPROG_WIFI_TCP_DEVICE
-FLProgWiFiClient::FLProgWiFiClient(WiFiClient _client)
-{
-    client = _client;
-}
-#endif
 
-uint8_t FLProgWiFiClient::connected()
+int FLProgAbstractWiFiClient::connect(IPAddress ip, uint16_t port)
 {
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.connected();
-#else
-    return 0;
-#endif
-}
-
-int FLProgWiFiClient::connect(IPAddress ip, uint16_t port)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.connect(ip, port);
-#else
     (void)ip;
     (void)port;
     return 0;
-#endif
 }
-#ifdef ARDUINO_ARCH_ESP8266
-int FLProgWiFiClient::connect(IPAddress ip, uint16_t port, int32_t timeout_ms)
+
+int FLProgAbstractWiFiClient::connect(IPAddress ip, uint16_t port, int32_t timeout_ms)
 {
+    (void)ip;
+    (void)port;
     (void)timeout_ms;
-    return connect(ip, port);
-}
-#else
-int FLProgWiFiClient::connect(IPAddress ip, uint16_t port, int32_t timeout_ms)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.connect(ip, port, timeout_ms);
-#else
-    (void)ip;
-    (void)port;
-    (void)itimeout_ms;
     return 0;
-#endif
 }
-#endif
 
-int FLProgWiFiClient::connect(const char *host, uint16_t port)
+int FLProgAbstractWiFiClient::connect(const char *host, uint16_t port)
 {
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.connect(host, port);
-#else
     (void)host;
     (void)port;
     return 0;
-#endif
 }
 
-#ifdef ARDUINO_ARCH_ESP8266
-int FLProgWiFiClient::connect(const char *host, uint16_t port, int32_t timeout_ms)
+int FLProgAbstractWiFiClient::connect(const char *host, uint16_t port, int32_t timeout_ms)
 {
-    (void)timeout_ms;
-    return connect(host, port);
-}
-#else
-int FLProgWiFiClient::connect(const char *host, uint16_t port, int32_t timeout_ms)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.connect(host, port, timeout_ms);
-#else
     (void)host;
     (void)port;
     (void)timeout_ms;
     return 0;
-#endif
 }
-#endif
 
-size_t FLProgWiFiClient::write(uint8_t data)
+size_t FLProgAbstractWiFiClient::write(uint8_t data)
 {
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.write(data);
-#else
     (void)data;
     return 0;
-#endif
 }
 
-size_t FLProgWiFiClient::write(const uint8_t *buf, size_t size)
+size_t FLProgAbstractWiFiClient::write(const uint8_t *buf, size_t size)
 {
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.write(buf, size);
-#else
     (void)buf;
     (void)size;
     return 0;
-#endif
 }
-/*
-size_t FLProgWiFiClient::write_P(PGM_P buf, size_t size)
+
+int FLProgAbstractWiFiClient::read(uint8_t *buf, size_t size)
 {
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.write_P(buf, size);
-#else
     (void)buf;
     (void)size;
     return 0;
-#endif
-}
-*/
-#ifdef ARDUINO_ARCH_ESP8266
-size_t FLProgWiFiClient::write(Stream &stream)
-{
-    (void)stream;
-    return 0;
-}
-#else
-size_t FLProgWiFiClient::write(Stream &stream)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.write(stream);
-#else
-    (void)stream;
-    return 0;
-#endif
-}
-#endif
-
-int FLProgWiFiClient::available()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.available();
-#else
-    return 0;
-#endif
 }
 
-int FLProgWiFiClient::read()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.read();
-#else
-    return 0;
-#endif
-}
+//----------------------------------FlprogAbstractWiFiServer-----------------
 
-int FLProgWiFiClient::read(uint8_t *buf, size_t size)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.read(buf, size);
-#else
-    (void)buf;
-    (void)size;
-    return 0;
-#endif
-}
-
-int FLProgWiFiClient::peek()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.peek();
-#else
-    return 0;
-#endif
-}
-
-void FLProgWiFiClient::flush()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    client.flush();
-#endif
-}
-
-void FLProgWiFiClient::stop()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    client.stop();
-
-#endif
-}
-
-#ifdef ARDUINO_ARCH_ESP8266
-IPAddress FLProgWiFiClient::remoteIP()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.remoteIP();
-#else
-    return IPAddress(0, 0, 0, 0);
-#endif
-}
-
-uint16_t FLProgWiFiClient::remotePort()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.remotePort();
-#else
-    return 0;
-#endif
-}
-
-IPAddress FLProgWiFiClient::localIP()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.localIP();
-#else
-    return IPAddress(0, 0, 0, 0);
-#endif
-}
-
-uint16_t FLProgWiFiClient::localPort()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.localPort();
-#else
-    return 0;
-#endif
-}
-#else
-IPAddress FLProgWiFiClient::remoteIP() const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.remoteIP();
-#else
-    return IPAddress(0, 0, 0, 0);
-#endif
-}
-
-IPAddress FLProgWiFiClient::remoteIP(int fd) const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.remoteIP(fd);
-#else
-    return IPAddress(0, 0, 0, 0);
-#endif
-}
-
-uint16_t FLProgWiFiClient::remotePort() const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.remotePort();
-#else
-    return 0;
-#endif
-}
-
-uint16_t FLProgWiFiClient::remotePort(int fd) const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.remotePort(fd);
-#else
-    return 0;
-#endif
-}
-
-IPAddress FLProgWiFiClient::localIP() const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.localIP();
-#else
-    return IPAddress(0, 0, 0, 0);
-#endif
-}
-
-IPAddress FLProgWiFiClient::localIP(int fd) const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.localIP(fd);
-#else
-    return IPAddress(0, 0, 0, 0);
-#endif
-}
-
-uint16_t FLProgWiFiClient::localPort() const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.localPort();
-#else
-    return 0;
-#endif
-}
-
-uint16_t FLProgWiFiClient::localPort(int fd) const
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    return client.localPort(fd);
-#else
-    return 0;
-#endif
-}
-
-#endif
-
-//----------------------------------FlprogEthernetServer-----------------
-FlprogWiFiServer::FlprogWiFiServer(FLProgAbstracttWiFiInterface *sourse, int _port)
-{
-    port = _port;
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    server = new WiFiServer(port);
-#endif
-    interface = sourse;
-}
-
-FLProgWiFiClient FlprogWiFiServer::accept()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        return FLProgWiFiClient(server->accept());
-    }
-    if (interface->canStartServer())
-    {
-        server->begin(port);
-        serverIsBegin = true;
-        return FLProgWiFiClient(server->accept());
-    }
-#endif
-    return FLProgWiFiClient();
-}
-
-void FlprogWiFiServer::begin(uint16_t port, int reuse_enable)
+void FlprogAbstractWiFiServer::begin(uint16_t port, int reuse_enable)
 {
     (void)port;
     (void)reuse_enable;
 }
 
-void FlprogWiFiServer::setNoDelay(bool nodelay)
+#ifndef FLPROG_WIFI_TCP_DEVICE
+FLProgWiFiClient FlprogAbstractWiFiServer::accept()
 {
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        server->setNoDelay(nodelay);
-    }
-#else
-    (void)nodelay;
-#endif
+    return FLProgWiFiClient();
 }
+#endif
 
-bool FlprogWiFiServer::getNoDelay()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        return server->getNoDelay();
-    }
-#endif
-    return false;
-}
+//----------------------------------FlprogWiFiServer-----------------
 
-bool FlprogWiFiServer::hasClient()
+#ifndef FLPROG_WIFI_TCP_DEVICE
+FlprogWiFiServer::FlprogWiFiServer(FLProgAbstracttWiFiInterface *sourse, int _port)
 {
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        return server->hasClient();
-    }
-#endif
-    return false;
-}
-#ifndef ARDUINO_ARCH_ESP8266
-size_t FlprogWiFiServer::write(const uint8_t *data, size_t len)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        return server->write(data, len);
-    }
-#else
-    (void)data;
-    (void)len;
-#endif
-    return 0;
-}
-
-size_t FlprogWiFiServer::write(uint8_t data)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        return server->write(data);
-    }
-#else
-    (void)data;
-#endif
-    return 0;
-}
-#endif
-void FlprogWiFiServer::end()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-#ifdef ARDUINO_ARCH_ESP8266
-        server->stop();
-#else
-        server->end();
-#endif
-    }
-#endif
-}
-
-void FlprogWiFiServer::close()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        server->close();
-    }
-#endif
-}
-
-void FlprogWiFiServer::stop()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        server->stop();
-    }
-#endif
-}
-
-bool FlprogWiFiServer::listening()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        if (server)
-        {
-            return true;
-        }
-    }
-#endif
-    return false;
-}
-#ifndef ARDUINO_ARCH_ESP8266
-int FlprogWiFiServer::setTimeout(uint32_t seconds)
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        return server->setTimeout(seconds);
-    }
-#else
-    (void)seconds;
-#endif
-    return 0;
-}
-
-void FlprogWiFiServer::stopAll()
-{
-#ifdef FLPROG_WIFI_TCP_DEVICE
-    if (serverIsBegin)
-    {
-        server->stopAll();
-    }
-#endif
-}
+    (void)sourse;
+    (void)_port;
+};
 #endif

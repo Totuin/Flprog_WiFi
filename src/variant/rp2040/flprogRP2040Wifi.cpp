@@ -1,5 +1,7 @@
-#include "flprogEsp8266Wifi.h"
-#ifdef ARDUINO_ARCH_ESP8266
+#include "flprogRP2040Wifi.h"
+
+#ifdef ARDUINO_ARCH_RP2040
+#ifdef ARDUINO_RASPBERRY_PI_PICO_W
 //-------------------------FLProgWiFiClient-----------------------------
 FLProgWiFiClient::FLProgWiFiClient(WiFiClient _client)
 {
@@ -33,7 +35,7 @@ FLProgWiFiClient FlprogWiFiServer::accept()
     }
     if (interface->canStartServer())
     {
-        server->begin(port);
+        server->begin();
         serverIsBegin = true;
         return FLProgWiFiClient(server->accept());
     }
@@ -104,47 +106,44 @@ bool FlprogWiFiServer::listening()
 //-----------------------------FLProgOnBoardWifi---------------------------
 void FLProgOnBoardWifi::pool()
 {
+    clientStatus = WiFi.status() == WL_CONNECTED;
+
     if (clientIsNeedReconect || apIsNeedReconect)
     {
         reconnect();
     }
-    clientStatus = WiFi.status() == WL_CONNECTED;
     if (clientStatus)
     {
         if (needUpdateClientData)
         {
             clientIp = WiFi.localIP();
+            apIp = clientIp;
             clientSubnet = WiFi.subnetMask();
+            apSubnet = clientSubnet;
             clientGateway = WiFi.gatewayIP();
-            clientDns = WiFi.dnsIP();
-            WiFi.macAddress(clientMac);
+            apGateway = clientGateway;
+            clientDns = clientGateway;
+            apDns = clientDns;
             needUpdateClientData = false;
+            WiFi.macAddress(clientMac);
+            WiFi.macAddress(apMac);
         }
     }
     else
     {
         needUpdateClientData = true;
+        if (clientWorkStatus)
+        {
+            clientReconnect();
+        }
     }
 }
 
 void FLProgOnBoardWifi::reconnect()
 {
-    if (WiFi.getAutoConnect() != true)
-    {
-        WiFi.setAutoConnect(true);
-    }
-    WiFi.setAutoReconnect(true);
-
     if (apWorkStatus)
     {
-        if (clientWorkStatus)
-        {
-            mode = WIFI_AP_STA;
-        }
-        else
-        {
-            mode = WIFI_AP;
-        }
+        mode = WIFI_AP;
     }
     else
     {
@@ -152,31 +151,35 @@ void FLProgOnBoardWifi::reconnect()
         {
             mode = WIFI_STA;
         }
+        else
+        {
+            mode = WIFI_OFF;
+        }
     }
     WiFi.mode(mode);
-    clientReconnect();
-    apReconnect();
-}
-
-void FLProgOnBoardWifi::clientReconnect()
-{
-    if (!clientIsNeedReconect)
+    if (clientStatus)
     {
+        WiFi.disconnect();
+    }
+    if (mode == WIFI_OFF)
+    {
+        clientIsNeedReconect = false;
+        apIsNeedReconect = false;
         return;
     }
-    clientIsNeedReconect = false;
-    if (!clientWorkStatus)
+    if (mode == WIFI_AP)
     {
-        if (clientStatus)
-        {
-            WiFi.disconnect();
-        }
+        WiFi.begin(apSsid, apPassword);
+        WiFi.beginAP(apSsid, apPassword);
+        clientIsNeedReconect = false;
+        apIsNeedReconect = false;
+        isCanStartServer = true;
         return;
     }
-    wifi_set_macaddr(STATION_IF, clientMac);
+    WiFi.setHostname("Flprog-PicoW2");
     if (clientIsDhcp)
     {
-        WiFi.config(0U, 0U, 0U, 0U, 0U);
+        WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
     }
     else
     {
@@ -190,34 +193,70 @@ void FLProgOnBoardWifi::clientReconnect()
             clientDns = clientIp;
             clientDns[3] = 1;
         }
-        WiFi.config(clientIp, clientGateway, clientSubnet, clientDns, clientDns);
+        WiFi.config(clientIp, clientDns, clientGateway, clientSubnet);
     }
+    WiFi.begin(clientSsid, clientPassword);
+
+    isCanStartServer = true;
+    lastReconnectTime = millis();
+    clientIsNeedReconect = false;
+    apIsNeedReconect = false;
+}
+
+void FLProgOnBoardWifi::clientReconnect()
+{
+    if (!clientWorkStatus)
+    {
+        return;
+    }
+    if (!flprog::isTimer(lastReconnectTime, reconnectPeriod))
+    {
+        return;
+    }
+    lastReconnectTime = millis();
+    if (clientIsDhcp)
+    {
+        WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
+    }
+    else
+    {
+        if (clientGateway == IPAddress(0, 0, 0, 0))
+        {
+            clientGateway = clientIp;
+            clientGateway[3] = 1;
+        }
+        if (clientDns == IPAddress(0, 0, 0, 0))
+        {
+            clientDns = clientIp;
+            clientDns[3] = 1;
+        }
+        WiFi.config(clientIp, clientDns, clientGateway, clientSubnet);
+    }
+
     WiFi.begin(clientSsid, clientPassword);
     isCanStartServer = true;
 }
-void FLProgOnBoardWifi::apReconnect()
+
+void FLProgOnBoardWifi::clientOn()
 {
-    if (!apIsNeedReconect)
+    if (clientWorkStatus)
     {
-
         return;
     }
-    apIsNeedReconect = false;
-    if (!apWorkStatus)
-    {
-        WiFi.softAPdisconnect();
-        return;
-    }
-    wifi_set_macaddr(SOFTAP_IF, apMac);
-    if (apGateway == IPAddress(0, 0, 0, 0))
-    {
-        apGateway = apIp;
-        apGateway[3] = 1;
-    }
-
-    WiFi.softAPConfig(apIp, apGateway, apSubnet);
-    WiFi.softAP(apSsid, apPassword);
-    isCanStartServer = true;
+    clientWorkStatus = true;
+    apWorkStatus = false;
+    clientIsNeedReconect = true;
 }
 
+void FLProgOnBoardWifi::apOn()
+{
+    if (apWorkStatus)
+    {
+        return;
+    }
+    apWorkStatus = true;
+    clientWorkStatus = false;
+    apIsNeedReconect = true;
+}
+#endif
 #endif
