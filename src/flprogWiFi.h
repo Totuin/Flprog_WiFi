@@ -2,12 +2,12 @@
 #include "Arduino.h"
 #include "flprogUtilites.h"
 #include "IPAddress.h"
-#include "Client.h"
 #include "Server.h"
 
 #ifdef ARDUINO_ARCH_ESP8266
 #define FLPROG_WIFI_TCP_DEVICE
 #include "ESP8266WiFi.h"
+#include "WiFiUdp.h"
 extern "C"
 {
 #include "user_interface.h"
@@ -78,6 +78,10 @@ public:
     virtual void pool() = 0;
     bool canStartServer() { return isCanStartServer; };
     virtual bool isImitation() { return false; }
+    virtual bool isBusy() { return busy; };
+    void setBusy() { busy = true; };
+    void resetBusy() { busy = false; };
+    virtual bool isReady() { return getClientStatus(); };
 
 protected:
     uint8_t apMac[6] = {0, 0, 0, 0, 0, 0};
@@ -86,6 +90,7 @@ protected:
     char apPassword[40] = "";
     char clientSsid[40] = "";
     char clientPassword[40] = "";
+    bool busy = false;
 
     IPAddress apIp = IPAddress(0, 0, 0, 0);
     IPAddress clientIp = IPAddress(0, 0, 0, 0);
@@ -112,70 +117,13 @@ class FLProgOnBoardWifi : public FLProgAbstracttWiFiInterface
 public:
     virtual void pool(){};
     virtual bool isImitation() { return true; }
+    virtual bool isReady() { return false; };
 };
 #endif
 
-class FLProgAbstractWiFiClient : public Client
-{
-public:
-    virtual uint8_t connected() { return 0; };
-    virtual int connect(IPAddress ip, uint16_t port);
-    virtual int connect(IPAddress ip, uint16_t port, int32_t timeout_ms);
-    virtual int connect(const char *host, uint16_t port);
-    virtual int connect(const char *host, uint16_t port, int32_t timeout_ms);
-    virtual size_t write(uint8_t data);
-    virtual size_t write(const uint8_t *buf, size_t size);
-    virtual int available() { return 0; };
-    virtual int read() { return 0; };
-    virtual int read(uint8_t *buf, size_t size);
-    virtual int peek() { return 0; };
-    virtual void flush(){};
-    virtual void stop(){};
-    virtual IPAddress remoteIP() { return IPAddress(0, 0, 0, 0); };
-    virtual uint16_t remotePort() { return 0; };
-    virtual IPAddress localIP() { return IPAddress(0, 0, 0, 0); };
-    virtual uint16_t localPort() { return 0; };
-    operator bool() { return connected(); }
-    using Print::write;
-};
-
-#ifndef FLPROG_WIFI_TCP_DEVICE
-class FLProgWiFiClient : public FLProgAbstractWiFiClient
-{
-};
-#endif
-
-class FlprogAbstractWiFiServer
-{
-public:
-    void begin(uint16_t port = 0) { (void)port; };
-    void begin(uint16_t port, int reuse_enable);
-    virtual void setNoDelay(bool nodelay) { (void)nodelay; };
-    virtual bool getNoDelay() { return false; };
-    virtual bool hasClient() { return false; };
-    virtual void end(){};
-    virtual void close(){};
-    virtual void stop(){};
-    virtual bool listening() { return false; };
-    operator bool() { return listening(); }
-#ifndef FLPROG_WIFI_TCP_DEVICE
-    FLProgWiFiClient accept();
-    FLProgWiFiClient available() { return accept(); };
-#endif
-
-protected:
-    FLProgAbstracttWiFiInterface *interface;
-    bool serverIsBegin = false;
-    int port = 80;
-};
-
-#ifndef FLPROG_WIFI_TCP_DEVICE
-class FlprogWiFiServer : public FlprogAbstractWiFiServer
-{
-public:
-    FlprogWiFiServer(FLProgAbstracttWiFiInterface *sourse, int _port);
-};
-#endif
+#include "flprogWifiClient.h"
+#include "flprogWifiServer.h"
+#include "flprofWifiUdp.h"
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include "variant/esp/esp8266/flprogEsp8266Wifi.h"
