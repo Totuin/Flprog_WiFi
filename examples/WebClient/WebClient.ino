@@ -12,13 +12,13 @@ void setup() {
   Serial.begin(115200);
 
   WifiInterface.clientOn();
-  WifiInterface.setClientDhcp();
-  WifiInterface.setClientMac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28); //--Установка MAC-адрес контроллера (лучше адрес прошитый производителем);
+  WifiInterface.setDhcp();
+  WifiInterface.mac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28); //--Установка MAC-адрес контроллера (лучше адрес прошитый производителем);
   WifiInterface.setClientSsidd("totuin-router");
   WifiInterface.setClientPassword("12345678");
 
 
-  while ( !WifiInterface.getClientStatus()) {
+  while ( !WifiInterface.isReady()) {
     WifiInterface.pool();
     delay(500);
     Serial.print(".");

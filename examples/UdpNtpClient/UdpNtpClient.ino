@@ -72,8 +72,8 @@ void setup()
   }
 
   WifiInterface.clientOn();
-  WifiInterface.setClientDhcp();
-  WifiInterface.setClientMac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28); //--Установка MAC-адрес контроллера (лучше адрес прошитый производителем);
+  WifiInterface.setDhcp();
+  WifiInterface.mac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28); //--Установка MAC-адрес контроллера (лучше адрес прошитый производителем);
   WifiInterface.setClientSsidd("totuin-router");
   WifiInterface.setClientPassword("12345678");
 
@@ -86,7 +86,7 @@ void loop()
   //-------------------------------------------------------------------------------------------------
   //                                           Основная логика
   //-------------------------------------------------------------------------------------------------
-  if ( WifiInterface.getClientStatus())
+  if ( WifiInterface.isReady())
   {
     if (isNeedSendConnectMessage)
     {

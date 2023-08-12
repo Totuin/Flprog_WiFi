@@ -18,15 +18,15 @@ void FLProgOnBoardWifi::pool()
         {
             clientIp = WiFi.localIP();
             apIp = clientIp;
-            clientSubnet = WiFi.subnetMask();
-            apSubnet = clientSubnet;
-            clientGateway = WiFi.gatewayIP();
-            apGateway = clientGateway;
-            clientDns = clientGateway;
-            apDns = clientDns;
+            clientSubnetIp = WiFi.subnetMask();
+            apSubnetIp = clientSubnetIp;
+            clientGatewayIp = WiFi.gatewayIP();
+            apGatewayIp = clientGatewayIp;
+            clientDnsIp = clientGatewayIp;
+            apDnsIp = clientDnsIp;
             needUpdateClientData = false;
-            WiFi.macAddress(clientMac);
-            WiFi.macAddress(apMac);
+            WiFi.macAddress(clientMacAddress);
+            WiFi.macAddress(apMacaddress);
         }
     }
     else
@@ -83,17 +83,17 @@ void FLProgOnBoardWifi::reconnect()
     }
     else
     {
-        if (clientGateway == IPAddress(0, 0, 0, 0))
+        if (clientGatewayIp == IPAddress(0, 0, 0, 0))
         {
-            clientGateway = clientIp;
-            clientGateway[3] = 1;
+            clientGatewayIp = clientIp;
+            clientGatewayIp[3] = 1;
         }
-        if (clientDns == IPAddress(0, 0, 0, 0))
+        if (clientDnsIp == IPAddress(0, 0, 0, 0))
         {
-            clientDns = clientIp;
-            clientDns[3] = 1;
+            clientDnsIp = clientIp;
+            clientDnsIp[3] = 1;
         }
-        WiFi.config(clientIp, clientDns, clientGateway, clientSubnet);
+        WiFi.config(clientIp, clientDnsIp, clientGatewayIp, clientSubnetIp);
     }
     WiFi.begin(clientSsid, clientPassword);
 
@@ -120,17 +120,17 @@ void FLProgOnBoardWifi::clientReconnect()
     }
     else
     {
-        if (clientGateway == IPAddress(0, 0, 0, 0))
+        if (clientGatewayIp == IPAddress(0, 0, 0, 0))
         {
-            clientGateway = clientIp;
-            clientGateway[3] = 1;
+            clientGatewayIp = clientIp;
+            clientGatewayIp[3] = 1;
         }
-        if (clientDns == IPAddress(0, 0, 0, 0))
+        if (clientDnsIp == IPAddress(0, 0, 0, 0))
         {
-            clientDns = clientIp;
-            clientDns[3] = 1;
+            clientDnsIp = clientIp;
+            clientDnsIp[3] = 1;
         }
-        WiFi.config(clientIp, clientDns, clientGateway, clientSubnet);
+        WiFi.config(clientIp, clientDnsIp, clientGatewayIp, clientSubnetIp);
     }
 
     WiFi.begin(clientSsid, clientPassword);

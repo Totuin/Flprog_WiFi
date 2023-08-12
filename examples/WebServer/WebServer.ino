@@ -19,32 +19,25 @@ void setup()
     Serial.println("На этой плате нет встроеннного WiFi");
   }
   WifiInterface.apOn();
-  WifiInterface.setApMac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
+  WifiInterface.apMac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
   WifiInterface.setApSsid("testESP");
   WifiInterface.setApPassword("12345678");
-  WifiInterface.setApIp(IPAddress(192, 168, 1, 1));
-  WifiInterface.setApDns(IPAddress(192, 168, 1, 1));
-  WifiInterface.setApSubnet(IPAddress(255, 255, 255, 0));
-  WifiInterface.setApGateway(IPAddress(192, 168, 1, 1));
+  WifiInterface.apLocalIP(IPAddress(192, 168, 1, 1));
+  WifiInterface.apDns(IPAddress(192, 168, 1, 1));
+  WifiInterface.apSubnet(IPAddress(255, 255, 255, 0));
+  WifiInterface.apGateway(IPAddress(192, 168, 1, 1));
 
   WifiInterface.clientOn();
-  WifiInterface.setClientDhcp();
-  WifiInterface.setClientMac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28);
+  WifiInterface.setDhcp();
+  WifiInterface.mac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28);
   WifiInterface.setClientSsidd("totuin-router");
   WifiInterface.setClientPassword("12345678");
-  /*
-
-    WifiInterface.setClientIp(192, 168, 199, 55);
-    WifiInterface.setClientDns(192, 168, 199, 1);
-    WifiInterface.setClientSubnet(255, 255, 255, 0);
-    WifiInterface.setClientGateway(192, 168, 199, 1);
-  */
 }
 
 void loop()
 {
   WifiInterface.pool();
-  if (WifiInterface.getClientStatus())
+  if (WifiInterface.isReady())
   {
     if (isNeedSendConnectMessage)
     {
@@ -52,11 +45,11 @@ void loop()
       Serial.print("Ip - ");
       Serial.println(WifiInterface.localIP());
       Serial.print("Subnet mask - ");
-      Serial.println(WifiInterface.subnetMask());
+      Serial.println(WifiInterface.subnet());
       Serial.print("Gateway IP - ");
-      Serial.println(WifiInterface.gatewayIP());
+      Serial.println(WifiInterface.gateway());
       Serial.print("Dns IP - ");
-      Serial.println(WifiInterface.dnsIP());
+      Serial.println(WifiInterface.dns());
       isNeedSendConnectMessage = false;
       isNeedSendDisconnectMessage = true;
     }

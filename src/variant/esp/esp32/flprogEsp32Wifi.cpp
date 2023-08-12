@@ -14,9 +14,9 @@ void FLProgOnBoardWifi::pool()
         if (needUpdateClientData)
         {
             clientIp = WiFi.localIP();
-            clientSubnet = WiFi.subnetMask();
-            clientGateway = WiFi.gatewayIP();
-            clientDns = WiFi.dnsIP();
+            clientSubnetIp = WiFi.subnetMask();
+            clientGatewayIp = WiFi.gatewayIP();
+            clientDnsIp = WiFi.dnsIP();
             needUpdateClientData = false;
         }
     }
@@ -73,7 +73,7 @@ void FLProgOnBoardWifi::clientReconnect()
         return;
     }
 
-    esp_wifi_set_mac(WIFI_IF_STA, clientMac);
+    esp_wifi_set_mac(WIFI_IF_STA, clientMacAddress);
 
     if (clientIsDhcp)
     {
@@ -81,17 +81,17 @@ void FLProgOnBoardWifi::clientReconnect()
     }
     else
     {
-        if (clientGateway == IPAddress(0, 0, 0, 0))
+        if (clientGatewayIp == IPAddress(0, 0, 0, 0))
         {
-            clientGateway = clientIp;
-            clientGateway[3] = 1;
+            clientGatewayIp = clientIp;
+            clientGatewayIp[3] = 1;
         }
-        if (clientDns == IPAddress(0, 0, 0, 0))
+        if (clientDnsIp == IPAddress(0, 0, 0, 0))
         {
-            clientDns = clientIp;
-            clientDns[3] = 1;
+            clientDnsIp = clientIp;
+            clientDnsIp[3] = 1;
         }
-        WiFi.config(clientIp, clientGateway, clientSubnet, clientDns, clientDns);
+        WiFi.config(clientIp, clientGatewayIp, clientSubnetIp, clientDnsIp, clientDnsIp);
     }
     WiFi.begin(clientSsid, clientPassword);
     isCanStartServer = true;
@@ -109,16 +109,16 @@ void FLProgOnBoardWifi::apReconnect()
         WiFi.softAPdisconnect();
         return;
     }
-    esp_wifi_set_mac(WIFI_IF_AP, apMac);
-    if (apGateway == IPAddress(0, 0, 0, 0))
+    esp_wifi_set_mac(WIFI_IF_AP, apMacaddress);
+    if (apGatewayIp == IPAddress(0, 0, 0, 0))
     {
-        apGateway = apIp;
-        apGateway[3] = 1;
+        apGatewayIp = apIp;
+        apGatewayIp[3] = 1;
     }
-    WiFi.softAPConfig(apIp, apGateway, apSubnet);
+    WiFi.softAPConfig(apIp, apGatewayIp, apSubnetIp);
     WiFi.softAP(apSsid, apPassword);
     isCanStartServer = true;
-    WiFi.softAPConfig(apIp, apGateway, apSubnet);
+    WiFi.softAPConfig(apIp, apGatewayIp, apSubnetIp);
 }
 
 #endif
