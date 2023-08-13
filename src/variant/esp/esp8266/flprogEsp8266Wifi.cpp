@@ -80,17 +80,24 @@ void FLProgOnBoardWifi::clientReconnect()
     }
     else
     {
-        if (clientGatewayIp == IPAddress(0, 0, 0, 0))
+        if (clientIp == IPAddress(0, 0, 0, 0))
         {
-            clientGatewayIp = clientIp;
-            clientGatewayIp[3] = 1;
+            WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
         }
-        if (clientDnsIp == IPAddress(0, 0, 0, 0))
+        else
         {
-            clientDnsIp = clientIp;
-            clientDnsIp[3] = 1;
+            if (clientGatewayIp == IPAddress(0, 0, 0, 0))
+            {
+                clientGatewayIp = clientIp;
+                clientGatewayIp[3] = 1;
+            }
+            if (clientDnsIp == IPAddress(0, 0, 0, 0))
+            {
+                clientDnsIp = clientIp;
+                clientDnsIp[3] = 1;
+            }
+            WiFi.config(clientIp, clientGatewayIp, clientSubnetIp, clientDnsIp, clientDnsIp);
         }
-        WiFi.config(clientIp, clientGatewayIp, clientSubnetIp, clientDnsIp, clientDnsIp);
     }
     WiFi.begin(clientSsid, clientPassword);
     isCanStartServer = true;
