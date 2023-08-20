@@ -8,7 +8,7 @@ void FLProgOnBoardWifi::pool()
 {
     clientStatus = WiFi.status() == WL_CONNECTED;
 
-    if (clientIsNeedReconect || apIsNeedReconect)
+    if (isNeedReconect || apIsNeedReconect)
     {
         reconnect();
     }
@@ -16,16 +16,16 @@ void FLProgOnBoardWifi::pool()
     {
         if (needUpdateClientData)
         {
-            clientIp = WiFi.localIP();
-            apIp = clientIp;
-            clientSubnetIp = WiFi.subnetMask();
-            apSubnetIp = clientSubnetIp;
-            clientGatewayIp = WiFi.gatewayIP();
-            apGatewayIp = clientGatewayIp;
-            clientDnsIp = clientGatewayIp;
-            apDnsIp = clientDnsIp;
+            ip = WiFi.localIP();
+            apIp = ip;
+            subnetIp = WiFi.subnetMask();
+            apSubnetIp = subnetIp;
+            gatewayIp = WiFi.gatewayIP();
+            apGatewayIp = gatewayIp;
+            dnsIp = gatewayIp;
+            apDnsIp = dnsIp;
             needUpdateClientData = false;
-            WiFi.macAddress(clientMacAddress);
+            WiFi.macAddress(macAddress);
             WiFi.macAddress(apMacaddress);
         }
     }
@@ -63,7 +63,7 @@ void FLProgOnBoardWifi::reconnect()
     }
     if (mode == WIFI_OFF)
     {
-        clientIsNeedReconect = false;
+        isNeedReconect = false;
         apIsNeedReconect = false;
         return;
     }
@@ -71,42 +71,42 @@ void FLProgOnBoardWifi::reconnect()
     {
         WiFi.begin(apSsid, apPassword);
         WiFi.beginAP(apSsid, apPassword);
-        clientIsNeedReconect = false;
+        isNeedReconect = false;
         apIsNeedReconect = false;
         isCanStartServer = true;
         return;
     }
     WiFi.setHostname("Flprog-PicoW2");
-    if (clientIsDhcp)
+    if (isDhcp)
     {
         WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
     }
     else
     {
-        if (clientIp == IPAddress(0, 0, 0, 0))
+        if (ip == IPAddress(0, 0, 0, 0))
         {
             WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
         }
         else
         {
-            if (clientGatewayIp == IPAddress(0, 0, 0, 0))
+            if (gatewayIp == IPAddress(0, 0, 0, 0))
             {
-                clientGatewayIp = clientIp;
-                clientGatewayIp[3] = 1;
+                gatewayIp = ip;
+                gatewayIp[3] = 1;
             }
-            if (clientDnsIp == IPAddress(0, 0, 0, 0))
+            if (dnsIp == IPAddress(0, 0, 0, 0))
             {
-                clientDnsIp = clientIp;
-                clientDnsIp[3] = 1;
+                dnsIp = ip;
+                dnsIp[3] = 1;
             }
-            WiFi.config(clientIp, clientDnsIp, clientGatewayIp, clientSubnetIp);
+            WiFi.config(ip, dnsIp, gatewayIp, subnetIp);
         }
     }
     WiFi.begin(clientSsid, clientPassword);
 
     isCanStartServer = true;
     lastReconnectTime = millis();
-    clientIsNeedReconect = false;
+    isNeedReconect = false;
     apIsNeedReconect = false;
 }
 
@@ -121,23 +121,23 @@ void FLProgOnBoardWifi::clientReconnect()
         return;
     }
     lastReconnectTime = millis();
-    if (clientIsDhcp)
+    if (isDhcp)
     {
         WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
     }
     else
     {
-        if (clientGatewayIp == IPAddress(0, 0, 0, 0))
+        if (gatewayIp == IPAddress(0, 0, 0, 0))
         {
-            clientGatewayIp = clientIp;
-            clientGatewayIp[3] = 1;
+            gatewayIp = ip;
+            gatewayIp[3] = 1;
         }
-        if (clientDnsIp == IPAddress(0, 0, 0, 0))
+        if (dnsIp == IPAddress(0, 0, 0, 0))
         {
-            clientDnsIp = clientIp;
-            clientDnsIp[3] = 1;
+            dnsIp = ip;
+            dnsIp[3] = 1;
         }
-        WiFi.config(clientIp, clientDnsIp, clientGatewayIp, clientSubnetIp);
+        WiFi.config(ip, dnsIp, gatewayIp, subnetIp);
     }
 
     WiFi.begin(clientSsid, clientPassword);
@@ -152,7 +152,7 @@ void FLProgOnBoardWifi::clientOn()
     }
     clientWorkStatus = true;
     apWorkStatus = false;
-    clientIsNeedReconect = true;
+    isNeedReconect = true;
 }
 
 void FLProgOnBoardWifi::apOn()

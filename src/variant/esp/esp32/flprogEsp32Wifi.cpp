@@ -4,7 +4,7 @@
 //-----------------------------FLProgOnBoardWifi---------------------------
 void FLProgOnBoardWifi::pool()
 {
-    if (clientIsNeedReconect || apIsNeedReconect)
+    if (isNeedReconect || apIsNeedReconect)
     {
         reconnect();
     }
@@ -13,10 +13,10 @@ void FLProgOnBoardWifi::pool()
     {
         if (needUpdateClientData)
         {
-            clientIp = WiFi.localIP();
-            clientSubnetIp = WiFi.subnetMask();
-            clientGatewayIp = WiFi.gatewayIP();
-            clientDnsIp = WiFi.dnsIP();
+            ip = WiFi.localIP();
+            subnetIp = WiFi.subnetMask();
+            gatewayIp = WiFi.gatewayIP();
+            dnsIp = WiFi.dnsIP();
             needUpdateClientData = false;
         }
     }
@@ -59,11 +59,11 @@ void FLProgOnBoardWifi::reconnect()
 
 void FLProgOnBoardWifi::clientReconnect()
 {
-    if (!clientIsNeedReconect)
+    if (!isNeedReconect)
     {
         return;
     }
-    clientIsNeedReconect = false;
+    isNeedReconect = false;
     if (!clientWorkStatus)
     {
         if (clientStatus)
@@ -73,31 +73,31 @@ void FLProgOnBoardWifi::clientReconnect()
         return;
     }
 
-    esp_wifi_set_mac(WIFI_IF_STA, clientMacAddress);
+    esp_wifi_set_mac(WIFI_IF_STA, macAddress);
 
-    if (clientIsDhcp)
+    if (isDhcp)
     {
-        WiFi.config(0U, 0U, 0U, 0U, 0U);
+        WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
     }
     else
     {
-        if (clientIp == IPAddress(0, 0, 0, 0))
+        if (ip == IPAddress(0, 0, 0, 0))
         {
-            WiFi.config(0U, 0U, 0U, 0U, 0U);
+            WiFi.config(IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0), IPAddress(0, 0, 0, 0));
         }
         else
         {
-            if (clientGatewayIp == IPAddress(0, 0, 0, 0))
+            if (gatewayIp == IPAddress(0, 0, 0, 0))
             {
-                clientGatewayIp = clientIp;
-                clientGatewayIp[3] = 1;
+                gatewayIp = ip;
+                gatewayIp[3] = 1;
             }
-            if (clientDnsIp == IPAddress(0, 0, 0, 0))
+            if (dnsIp == IPAddress(0, 0, 0, 0))
             {
-                clientDnsIp = clientIp;
-                clientDnsIp[3] = 1;
+                dnsIp = ip;
+                dnsIp[3] = 1;
             }
-            WiFi.config(clientIp, clientGatewayIp, clientSubnetIp, clientDnsIp, clientDnsIp);
+            WiFi.config(ip, gatewayIp, subnetIp, dnsIp, dnsIp);
         }
     }
     WiFi.begin(clientSsid, clientPassword);

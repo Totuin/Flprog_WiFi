@@ -27,7 +27,7 @@ void FLProgAbstracttWiFiInterface::setClientSsidd(String ssid)
         return;
     }
     ssid.toCharArray(clientSsid, 40);
-    clientIsNeedReconect = true;
+    isNeedReconect = true;
 }
 
 void FLProgAbstracttWiFiInterface::setClientPassword(String password)
@@ -37,7 +37,7 @@ void FLProgAbstracttWiFiInterface::setClientPassword(String password)
         return;
     }
     password.toCharArray(clientPassword, 40);
-    clientIsNeedReconect = true;
+    isNeedReconect = true;
 }
 
 void FLProgAbstracttWiFiInterface::apMac(uint8_t m0, uint8_t m1, uint8_t m2, uint8_t m3, uint8_t m4, uint8_t m5)
@@ -45,14 +45,6 @@ void FLProgAbstracttWiFiInterface::apMac(uint8_t m0, uint8_t m1, uint8_t m2, uin
     if (flprog::applyMac(m0, m1, m2, m3, m4, m5, apMacaddress))
     {
         apIsNeedReconect = true;
-    }
-}
-
-void FLProgAbstracttWiFiInterface::mac(uint8_t m0, uint8_t m1, uint8_t m2, uint8_t m3, uint8_t m4, uint8_t m5)
-{
-    if (flprog::applyMac(m0, m1, m2, m3, m4, m5, clientMacAddress))
-    {
-        clientIsNeedReconect = true;
     }
 }
 
@@ -65,16 +57,6 @@ void FLProgAbstracttWiFiInterface::apLocalIP(IPAddress ip)
     apIp = ip;
     apIsNeedReconect = true;
 }
-void FLProgAbstracttWiFiInterface::localIP(IPAddress ip)
-{
-    if (ip == clientIp)
-    {
-        return;
-    }
-    clientIp = ip;
-    clientIsNeedReconect = true;
-    clientIsDhcp = false;
-}
 
 void FLProgAbstracttWiFiInterface::apDns(IPAddress ip)
 {
@@ -84,16 +66,6 @@ void FLProgAbstracttWiFiInterface::apDns(IPAddress ip)
     }
     apDnsIp = ip;
     apIsNeedReconect = true;
-}
-
-void FLProgAbstracttWiFiInterface::dns(IPAddress ip)
-{
-    if (ip == clientDnsIp)
-    {
-        return;
-    }
-    clientDnsIp = ip;
-    clientIsNeedReconect = true;
 }
 
 void FLProgAbstracttWiFiInterface::apSubnet(IPAddress ip)
@@ -106,15 +78,6 @@ void FLProgAbstracttWiFiInterface::apSubnet(IPAddress ip)
     apIsNeedReconect = true;
 }
 
-void FLProgAbstracttWiFiInterface::subnet(IPAddress ip)
-{
-    if (ip == clientSubnetIp)
-    {
-        return;
-    }
-    clientSubnetIp = ip;
-    clientIsNeedReconect = true;
-}
 
 void FLProgAbstracttWiFiInterface::apGateway(IPAddress ip)
 {
@@ -125,15 +88,6 @@ void FLProgAbstracttWiFiInterface::apGateway(IPAddress ip)
     apGatewayIp = ip;
     apIsNeedReconect = true;
 }
-void FLProgAbstracttWiFiInterface::gateway(IPAddress ip)
-{
-    if (ip == clientGatewayIp)
-    {
-        return;
-    }
-    clientGatewayIp = ip;
-    clientIsNeedReconect = true;
-}
 
 void FLProgAbstracttWiFiInterface::clientOn()
 {
@@ -142,7 +96,7 @@ void FLProgAbstracttWiFiInterface::clientOn()
         return;
     }
     clientWorkStatus = true;
-    clientIsNeedReconect = true;
+    isNeedReconect = true;
 }
 
 void FLProgAbstracttWiFiInterface::clientOff()
@@ -152,7 +106,7 @@ void FLProgAbstracttWiFiInterface::clientOff()
         return;
     }
     clientWorkStatus = false;
-    clientIsNeedReconect = true;
+    isNeedReconect = true;
 }
 
 void FLProgAbstracttWiFiInterface::clientMode(bool val)
@@ -162,7 +116,7 @@ void FLProgAbstracttWiFiInterface::clientMode(bool val)
         return;
     }
     clientWorkStatus = val;
-    clientIsNeedReconect = true;
+    isNeedReconect = true;
 }
 
 void FLProgAbstracttWiFiInterface::apOn()
@@ -195,32 +149,5 @@ void FLProgAbstracttWiFiInterface::apMode(bool val)
     apIsNeedReconect = true;
 }
 
-void FLProgAbstracttWiFiInterface::setDhcp()
-{
-    if (clientIsDhcp)
-    {
-        return;
-    }
-    clientIsDhcp = true;
-    clientIsNeedReconect = true;
-}
 
-void FLProgAbstracttWiFiInterface::resetDhcp()
-{
-    if (!clientIsDhcp)
-    {
-        return;
-    }
-    clientIsDhcp = false;
-    clientIsNeedReconect = true;
-}
 
-void FLProgAbstracttWiFiInterface::dhcpMode(bool val)
-{
-    if (clientIsDhcp == val)
-    {
-        return;
-    }
-    clientIsDhcp = val;
-    clientIsNeedReconect = true;
-}

@@ -20,32 +20,8 @@
 #endif
 #endif
 
-class FLProgAbstractWiFiClient : public Client
-{
-public:
-    virtual uint8_t connected() { return 0; };
-    virtual int connect(IPAddress ip, uint16_t port);
-    virtual int connect(IPAddress ip, uint16_t port, int32_t timeout_ms);
-    virtual int connect(const char *host, uint16_t port);
-    virtual int connect(const char *host, uint16_t port, int32_t timeout_ms);
-    virtual size_t write(uint8_t data);
-    virtual size_t write(const uint8_t *buf, size_t size);
-    virtual int available() { return 0; };
-    virtual int read() { return 0; };
-    virtual int read(uint8_t *buf, size_t size);
-    virtual int peek() { return 0; };
-    virtual void flush(){};
-    virtual void stop(){};
-    virtual IPAddress remoteIP() { return IPAddress(0, 0, 0, 0); };
-    virtual uint16_t remotePort() { return 0; };
-    virtual IPAddress localIP() { return IPAddress(0, 0, 0, 0); };
-    virtual uint16_t localPort() { return 0; };
-    operator bool() { return connected(); }
-    using Print::write;
-};
-
 #ifdef FLPROG_WIFI_TCP_CLIENT
-class FLProgWiFiClient : public FLProgAbstractWiFiClient
+class FLProgWiFiClient : public Client
 {
 public:
     FLProgWiFiClient(){};
@@ -67,12 +43,26 @@ public:
     virtual uint16_t remotePort() { return client.remotePort(); };
     virtual IPAddress localIP() { return client.localIP(); };
     virtual uint16_t localPort() { return client.localPort(); };
+    virtual operator bool() { return connected(); };
 
 protected:
     WiFiClient client;
 };
 #else
-class FLProgWiFiClient : public FLProgAbstractWiFiClient
+class FLProgWiFiClient : public Client
 {
+public:
+    virtual int connect(IPAddress ip, uint16_t port);
+    virtual int connect(const char *host, uint16_t port);
+    virtual size_t write(uint8_t val);
+    virtual size_t write(const uint8_t *buf, size_t size);
+    virtual int available() { return 0; };
+    virtual int read() { return 0; };
+    virtual int read(uint8_t *buf, size_t size);
+    virtual int peek() { return 0; };
+    virtual void flush(){};
+    virtual void stop(){};
+    virtual uint8_t connected() { return 0; };
+    virtual operator bool() { return false; }
 };
 #endif

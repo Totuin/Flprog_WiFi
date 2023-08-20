@@ -2,92 +2,105 @@
 
 //----------------------------------FlprogAbstractWiFiServer-----------------
 
-void FlprogAbstractWiFiServer::begin(uint16_t port, int reuse_enable)
+void FLProgAbstractWiFiServer::begin(uint16_t port, int reuse_enable)
 {
     (void)port;
     (void)reuse_enable;
 }
 
-FLProgWiFiClient FlprogAbstractWiFiServer::accept()
+FLProgWiFiClient FLProgAbstractWiFiServer::accept()
 {
     return FLProgWiFiClient();
 }
 
 //----------------------------------FlprogWiFiServer-----------------
-#ifdef FLPROG_WIFI_TCP_DEVICE
-FlprogWiFiServer::FlprogWiFiServer(FLProgAbstracttWiFiInterface *sourse, int _port)
+#ifdef FLPROG_WIFI_TCP_SERVER
+
+void FLProgWiFiServer::begin(uint16_t _port)
 {
     port = _port;
-    server = new WiFiServer(port);
+    serverIsBegin = false;
+}
+
+FLProgWiFiServer::FLProgWiFiServer(FLProgAbstractTcpInterface *sourse, int _port)
+{
+    port = _port;
     interface = sourse;
 }
 
-FLProgWiFiClient FlprogWiFiServer::accept()
+FLProgWiFiClient FLProgWiFiServer::accept()
 {
-    if (serverIsBegin)
-    {
-        return FLProgWiFiClient(server->accept());
-    }
     if (interface->canStartServer())
     {
-        server->begin();
-        serverIsBegin = true;
-        return FLProgWiFiClient(server->accept());
+        if (!serverIsBegin)
+        {
+            server.begin(port);
+            serverIsBegin = true;
+        }
+        return FLProgWiFiClient(server.accept());
+    }
+    else
+    {
+        serverIsBegin = false;
+    }
+    if (serverIsBegin)
+    {
+        return FLProgWiFiClient(server.accept());
     }
     return FLProgWiFiClient();
 }
 
-void FlprogWiFiServer::setNoDelay(bool nodelay)
+void FLProgWiFiServer::setNoDelay(bool nodelay)
 {
     if (serverIsBegin)
     {
-        server->setNoDelay(nodelay);
+        server.setNoDelay(nodelay);
     }
 }
 
-bool FlprogWiFiServer::getNoDelay()
+bool FLProgWiFiServer::getNoDelay()
 {
     if (serverIsBegin)
     {
-        return server->getNoDelay();
-    }
-    return false;
-}
-
-bool FlprogWiFiServer::hasClient()
-{
-    if (serverIsBegin)
-    {
-        return server->hasClient();
+        return server.getNoDelay();
     }
     return false;
 }
 
-void FlprogWiFiServer::end()
+bool FLProgWiFiServer::hasClient()
 {
     if (serverIsBegin)
     {
-        server->stop();
+        return server.hasClient();
     }
+    return false;
 }
 
-void FlprogWiFiServer::close()
+void FLProgWiFiServer::end()
 {
     if (serverIsBegin)
     {
-        server->close();
+        server.stop();
     }
 }
 
-void FlprogWiFiServer::stop()
+void FLProgWiFiServer::close()
 {
     if (serverIsBegin)
     {
-        server->stop();
+        server.close();
     }
 }
 
-bool FlprogWiFiServer::listening()
+void FLProgWiFiServer::stop()
+{
+    if (serverIsBegin)
+    {
+        server.stop();
+    }
+}
+/*
+bool FLProgWiFiServer::listening()
 {
     if (serverIsBegin)
     {
@@ -98,8 +111,9 @@ bool FlprogWiFiServer::listening()
     }
     return false;
 }
+*/
 #else
-FlprogWiFiServer::FlprogWiFiServer(FLProgAbstracttWiFiInterface *sourse, int _port)
+FLProgWiFiServer::FLProgWiFiServer(FLProgAbstractTcpInterface *sourse, int _port)
 {
     (void)sourse;
     (void)_port;

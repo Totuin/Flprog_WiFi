@@ -1,12 +1,31 @@
 #pragma once
+#include "flprogUtilites.h"
 #include "flprogWifiClient.h"
-#include "flprogWiFi.h"
 
-class FlprogAbstractWiFiServer
+#ifdef ARDUINO_ARCH_ESP8266
+#define FLPROG_WIFI_TCP_SERVER
+#include "ESP8266WiFi.h"
+#endif
+
+#ifdef ARDUINO_ARCH_ESP32
+#define FLPROG_WIFI_TCP_SERVER
+#include "WiFi.h"
+#endif
+
+#ifdef ARDUINO_ARCH_RP2040
+#ifdef ARDUINO_RASPBERRY_PI_PICO_W
+#define FLPROG_WIFI_TCP_SERVER
+#include "WiFi.h"
+#endif
+#endif
+
+
+
+class FLProgAbstractWiFiServer : public FLProgAbstractTcpServer
 {
 public:
-    void begin(uint16_t port = 0) { (void)port; };
-    void begin(uint16_t port, int reuse_enable);
+    virtual void begin(uint16_t port = 0) { (void)port; };
+    virtual void begin(uint16_t port, int reuse_enable);
     virtual void setNoDelay(bool nodelay) { (void)nodelay; };
     virtual bool getNoDelay() { return false; };
     virtual bool hasClient() { return false; };
@@ -16,37 +35,39 @@ public:
     virtual bool listening() { return false; };
     operator bool() { return listening(); }
     virtual FLProgWiFiClient accept();
-    virtual FLProgWiFiClient available() { return accept(); };
 
 protected:
-    FLProgAbstracttWiFiInterface *interface;
+    FLProgAbstractTcpInterface *interface;
     bool serverIsBegin = false;
     int port = 80;
 };
 
-#ifdef FLPROG_WIFI_TCP_DEVICE
-class FlprogWiFiServer : public FlprogAbstractWiFiServer
+#ifdef FLPROG_WIFI_TCP_SERVER
+class FLProgWiFiServer : public FLProgAbstractWiFiServer
 {
 public:
-    FlprogWiFiServer(FLProgAbstracttWiFiInterface *sourse, int _port);
+    FLProgWiFiServer(FLProgAbstractTcpInterface *sourse, int _port);
     virtual FLProgWiFiClient accept();
-    virtual FLProgWiFiClient available() { return accept(); };
+    virtual void begin(uint16_t port = 0);
     virtual void setNoDelay(bool nodelay);
     virtual bool getNoDelay();
     virtual bool hasClient();
     virtual void end();
     virtual void close();
     virtual void stop();
-    virtual bool listening();
+   // virtual bool listening();
+    virtual FLProgWiFiClient *client() { return &cl; };
+    virtual void setClient() { cl = accept(); };
 
 protected:
-    WiFiServer *server;
+    WiFiServer server=WiFiServer(port) ;
+    FLProgWiFiClient cl;
 };
 
 #else
-class FlprogWiFiServer : public FlprogAbstractWiFiServer
+class FLProgWiFiServer : public FLProgAbstractWiFiServer
 {
 public:
-    FlprogWiFiServer(FLProgAbstracttWiFiInterface *sourse, int _port);
+    FLProgWiFiServer(FLProgAbstractTcpInterface *sourse, int _port);
 };
 #endif

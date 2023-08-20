@@ -1,7 +1,7 @@
 #include "flprogWiFi.h"
 
 FLProgOnBoardWifi WifiInterface;
-FlprogWiFiServer wifiServer(&WifiInterface, 80);
+FLProgWiFiServer wifiServer(&WifiInterface, 80);
 
 bool isNeedSendConnectMessage = true;
 bool isNeedSendDisconnectMessage = true;
@@ -18,7 +18,8 @@ void setup()
   {
     Serial.println("На этой плате нет встроеннного WiFi");
   }
-  WifiInterface.apOn();
+ 
+ WifiInterface.apOn();
   WifiInterface.apMac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
   WifiInterface.setApSsid("testESP");
   WifiInterface.setApPassword("12345678");
@@ -26,12 +27,13 @@ void setup()
   WifiInterface.apDns(IPAddress(192, 168, 1, 1));
   WifiInterface.apSubnet(IPAddress(255, 255, 255, 0));
   WifiInterface.apGateway(IPAddress(192, 168, 1, 1));
-
+ 
   WifiInterface.clientOn();
   WifiInterface.setDhcp();
   WifiInterface.mac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28);
-  WifiInterface.setClientSsidd("totuin-router");
+  WifiInterface.setClientSsidd("yana");
   WifiInterface.setClientPassword("12345678");
+  
 }
 
 void loop()

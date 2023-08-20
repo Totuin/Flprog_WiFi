@@ -4,14 +4,13 @@
 #######################################
 # # Datatypes (KEYWORD1)
 #######################################
-FLProgAbstractWiFiClient	KEYWORD1
-FLProgAbstractWiFiUDP	KEYWORD1
 FLProgAbstracttWiFiInterface	KEYWORD1
+FLProgAbstractWiFiServer	KEYWORD1
+FLProgAbstractWiFiUDP	KEYWORD1
 FLProgOnBoardWifi	KEYWORD1
 FLProgWiFiClient	KEYWORD1
+FLProgWiFiServer	KEYWORD1
 FLProgWiFiUDP	KEYWORD1
-FlprogAbstractWiFiServer	KEYWORD1
-FlprogWiFiServer	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -32,6 +31,7 @@ beginPacket	KEYWORD2
 beginPacketMulticast	KEYWORD2
 bool	KEYWORD2
 canStartServer	KEYWORD2
+client	KEYWORD2
 clientMode	KEYWORD2
 clientOff	KEYWORD2
 clientOn	KEYWORD2
@@ -39,39 +39,33 @@ close	KEYWORD2
 connect	KEYWORD2
 connected	KEYWORD2
 destinationIP	KEYWORD2
-dhcpMode	KEYWORD2
-dns	KEYWORD2
 end	KEYWORD2
 endPacket	KEYWORD2
 flush	KEYWORD2
-gateway	KEYWORD2
+getClient	KEYWORD2
 getNoDelay	KEYWORD2
+getServer	KEYWORD2
 hasClient	KEYWORD2
-isBusy	KEYWORD2
 isImitation	KEYWORD2
 isReady	KEYWORD2
 listening	KEYWORD2
 localIP	KEYWORD2
 localPort	KEYWORD2
-mac	KEYWORD2
 parsePacket	KEYWORD2
 peek	KEYWORD2
 pool	KEYWORD2
 read	KEYWORD2
 remoteIP	KEYWORD2
 remotePort	KEYWORD2
-resetBusy	KEYWORD2
-resetDhcp	KEYWORD2
 setApPassword	KEYWORD2
 setApSsid	KEYWORD2
-setBusy	KEYWORD2
+setClient	KEYWORD2
 setClientPassword	KEYWORD2
 setClientSsidd	KEYWORD2
-setDhcp	KEYWORD2
 setNoDelay	KEYWORD2
 stop	KEYWORD2
 stopAll	KEYWORD2
-subnet	KEYWORD2
+type	KEYWORD2
 write	KEYWORD2
 
 #######################################
@@ -83,3 +77,4 @@ ARDUINO_ARCH_RP2040	LITERAL1
 ARDUINO_RASPBERRY_PI_PICO_W	LITERAL1
 FLPROG_WIFI_TCP_CLIENT	LITERAL1
 FLPROG_WIFI_TCP_DEVICE	LITERAL1
+FLPROG_WIFI_TCP_SERVER	LITERAL1
