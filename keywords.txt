@@ -4,9 +4,9 @@
 #######################################
 # # Datatypes (KEYWORD1)
 #######################################
-FLProgAbstracttWiFiInterface	KEYWORD1
 FLProgAbstractWiFiServer	KEYWORD1
 FLProgAbstractWiFiUDP	KEYWORD1
+FLProgAbstracttWiFiInterface	KEYWORD1
 FLProgOnBoardWifi	KEYWORD1
 FLProgWiFiClient	KEYWORD1
 FLProgWiFiServer	KEYWORD1
